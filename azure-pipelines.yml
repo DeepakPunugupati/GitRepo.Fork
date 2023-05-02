@@ -1,0 +1,19 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- checkout: self
+
+- script: |
+    az bicep build --file BicepTemplate.bicep
+  displayName: 'Validating template file'
+- script: |
+    az login --use-device-code
+    az group create -n BicepPipeline -l centralus
+    az deployment group create --resource-group BicepPipeline --template-file BicepTemplate.bicep
+  displayName: 'Deploying resources to azure'
