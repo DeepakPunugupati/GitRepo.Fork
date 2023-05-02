@@ -3,6 +3,8 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+trigger:
+- main
 pool:
   vmImage: 'ubuntu-latest'
 
@@ -10,10 +12,11 @@ steps:
 - checkout: self
 
 - script: |
-    az bicep build --file BicepTemplate.bicep
-  displayName: 'Validating template file'
-- script: |
     az login --use-device-code
-    az group create -n BicepPipeline -l centralus
-    az deployment group create --resource-group BicepPipeline --template-file BicepTemplate.bicep
+    az group create -n ARMPipelinep -l eastus
+    az deployment group validate --resource-group ARMPipelinep --template-file ARMTemplate.json
+  displayName: 'Validating Tempate File'
+
+- script: |
+    az deployment group create --resource-group ARMPipelinep --template-file ARMTemplate.json
   displayName: 'Deploying resources to azure'
