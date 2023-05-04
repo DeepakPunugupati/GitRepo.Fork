@@ -1,0 +1,22 @@
+name: ARM Github Action
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checksout the file from the repo
+        uses: actions/checkout@v2
+
+      - name: Validating the arm templates syntax
+        run: |
+          az login --use-device-code
+          az group create -n ARMGit -l eastus
+          az deployment group validate --resource-group ARMGit --template-file ARMTemplate.json
+
+      - name: Deploying the resources into Azure
+        run: az deployment group create --resource-group ARMGit --template-file ARMTemplate.json
