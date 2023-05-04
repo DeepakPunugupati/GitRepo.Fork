@@ -1,0 +1,23 @@
+name: Bicep Github Action
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout the file from the repo
+      uses: actions/checkout@v2
+
+    - name: Validating the Bicep template syntax
+      run: |
+        az bicep build --file BicepTemplate.bicep
+        
+    - name: Deploying the resources into Azure
+      run: |
+        az login --use-device-code
+        az group create -n BicepGIT -l centralus
+        az deployment group create --resource-group BicepGIT --template-file BicepTemplate.bicep
